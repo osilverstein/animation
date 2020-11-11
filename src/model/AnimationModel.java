@@ -3,13 +3,13 @@ package model;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public interface AnimationModel {
+public interface AnimationModel<K, J> {
 
   void play(int time1, int time2);
-  void createScene(Scene scene);
-  void addActor(Actor actor);
+  void createScene(J scene);
+  void addActor(K actor);
   void getFileAsText() throws IOException;
   boolean hasScene();
-  ArrayList<Actor> getActors();
+  ArrayList<K> getActors();
 
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  *
  */
-public class Animation implements AnimationModel {
+public class Animation implements AnimationModel<Actor, Scene> {
 
   Scene scene;
   ArrayList<Actor> listOfActors;
