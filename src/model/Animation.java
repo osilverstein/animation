@@ -1,14 +1,18 @@
 package model;
 
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Shape;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
  */
-public class Animation implements AnimationModel<Actor, Scene> {
+public class Animation implements AnimationModel<Actor, Color, Shape, Point> {
 
   Scene scene;
   ArrayList<Actor> listOfActors;
@@ -42,23 +46,32 @@ public class Animation implements AnimationModel<Actor, Scene> {
    * @param scene
    */
   @Override
-  public void createScene(Scene scene) {
-    this.scene = scene;
+  public void createScene(Color bg, int xSize, int ySize) {
+    this.scene = new Scene(bg, xSize, ySize);
   }
 
   /**
-   * @param actor
+   * @param shape is the shape of the actor
+   * @param location is the current location of the actor
+   * @param timeAndLocation is the hashmap representing its movement
    */
   @Override
-  public void addActor(Actor actor) {
-    this.listOfActors.add(actor);
+  public void addActor(Shape shape, Point location, HashMap<Integer, Point> timeAndLocation) {
+    this.listOfActors.add(new Actor(shape, location,timeAndLocation));
+  }
+
+  @Override
+  public void addAnimationToActor(int actorIndex, HashMap<Integer, Point> newTimeAndLocation)
+      throws Exception {
+    Actor current = this.listOfActors.get(actorIndex);
+    current.addAnimation(newTimeAndLocation);
   }
 
   /**
    * @return
    */
   @Override
-  public void getFileAsText() throws IOException {
+  public void getFileAsText() {
     try {
       FileWriter myWriter = new FileWriter("filename.txt");
       myWriter.write(this.scene.toString());
