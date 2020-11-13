@@ -27,8 +27,8 @@ public class Animation implements AnimationModel<Actor, Color, Shape, Point, Flo
   }
 
   /**
-   * @param time1
-   * @param time2
+   * @param time1 is the start time to play
+   * @param time2 is the end time
    */
   @Override
   public void play(int time1, int time2) {
