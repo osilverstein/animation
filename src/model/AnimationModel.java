@@ -1,10 +1,9 @@
 package model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public interface AnimationModel<ACTOR_CLASS, COLOR_CLASS, SHAPE_CLASS, POINT_CLASS> {
+public interface AnimationModel<ACTOR_CLASS, COLOR_CLASS, SHAPE_CLASS, LOCATION_CLASS, TERTIARY_DATA> {
 
   /**
    * Plays back the current animation.
@@ -26,9 +25,25 @@ public interface AnimationModel<ACTOR_CLASS, COLOR_CLASS, SHAPE_CLASS, POINT_CLA
    * @param location is the current location of the actor
    * @param timeAndLocation is the hashmap representing its movement
    */
-  void addActor(SHAPE_CLASS shape, POINT_CLASS location, HashMap<Integer, POINT_CLASS> timeAndLocation);
+  void addActor(SHAPE_CLASS shape, LOCATION_CLASS location, HashMap<Integer, LOCATION_CLASS> timeAndLocation);
 
-  void addAnimationToActor(int actorIndex, HashMap<Integer, POINT_CLASS> newTimeAndLocation)
+  /**
+   * @param time1 is the start time of the new animation
+   * @param duration is the length of the animation
+   * @param loc1 is the start location
+   * @param loc2 is the end location
+   * @return a hashmap represent the final animation ready for input
+   */
+  HashMap<Integer, LOCATION_CLASS> generateEaseMoveAnimation(int time1, int duration, LOCATION_CLASS loc1, LOCATION_CLASS loc2);
+
+  /**
+   * Will only add animation if there is not already motion during the designated times
+   *  @param actorIndex is the index of the actor on which to animate
+   * @param newTimeAndLocation is the actor's animation represented as a
+   *                           series of "ticks" and locations
+   * @throws Exception if an animation is added that conflicts with a time
+   */
+  void safeAddAnimationToActor(int actorIndex, HashMap<Integer, LOCATION_CLASS> newTimeAndLocation)
       throws Exception;
   /**
    *

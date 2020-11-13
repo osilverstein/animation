@@ -12,7 +12,7 @@ import java.util.HashMap;
 /**
  *
  */
-public class Animation implements AnimationModel<Actor, Color, Shape, Point> {
+public class Animation implements AnimationModel<Actor, Color, Shape, Point, Float> {
 
   Scene scene;
   ArrayList<Actor> listOfActors;
@@ -43,7 +43,9 @@ public class Animation implements AnimationModel<Actor, Color, Shape, Point> {
   }
 
   /**
-   * @param scene
+   * @param bg    the background color of the scene
+   * @param xSize is the x dimension
+   * @param ySize is the y dimension
    */
   @Override
   public void createScene(Color bg, int xSize, int ySize) {
@@ -60,15 +62,46 @@ public class Animation implements AnimationModel<Actor, Color, Shape, Point> {
     this.listOfActors.add(new Actor(shape, location,timeAndLocation));
   }
 
+  /**
+   * @param time1    is the start time of the new animation
+   * @param duration is the length of the animation
+   * @param loc1     is the start location
+   * @param loc2     is the end location
+   * @return a hashmap represent the final animation ready for input
+   */
   @Override
-  public void addAnimationToActor(int actorIndex, HashMap<Integer, Point> newTimeAndLocation)
+  public HashMap<Integer, Point> generateEaseMoveAnimation(int time1, int duration, Point loc1,
+      Point loc2) {
+    float xTotalDelta = loc2.x - loc1.x; //total x distance covered
+    float yTotalDelta = loc2.y - loc1.y; // total y distance covered
+
+    //change per tick of both x and y
+    float xDeltaPerUnitOfTime = this.generateEase(time1, duration, loc1.x, xTotalDelta);
+    float yDeltaPerUnitOfTime = this.generateEase(time1, duration, loc1.y, yTotalDelta);
+
+    HashMap<Integer, Point> outputAnimation = new HashMap<Integer, Point>();
+
+    Point cachedLocation = new Point(loc1.x, loc1.y);
+
+    for (int i = time1; i <= time1 + duration; i++) {
+      cachedLocation.x = (int) (cachedLocation.x + xDeltaPerUnitOfTime); //update the x cache
+      cachedLocation.y = (int) (cachedLocation.y + yDeltaPerUnitOfTime); //update the y cache
+      outputAnimation.put(i, cachedLocation); //put in the new location at the current time
+    }
+
+    return outputAnimation;
+  }
+
+  @Override
+  public void safeAddAnimationToActor(int actorIndex, HashMap<Integer, Point> newTimeAndLocation)
       throws Exception {
     Actor current = this.listOfActors.get(actorIndex);
     current.addAnimation(newTimeAndLocation);
   }
 
+
   /**
-   * @return
+   *
    */
   @Override
   public void getFileAsText() {
@@ -102,5 +135,26 @@ public class Animation implements AnimationModel<Actor, Color, Shape, Point> {
   @Override
   public ArrayList<Actor> getActors() {
     return new ArrayList<Actor>(this.listOfActors);
+  }
+
+  /**
+   * Generates ease for any purpose.
+   * I selected this approach because I am confident floats can represent any data I need.
+   * Taken from https://stackoverflow.com/questions/13462001/ease-in-and-ease-out-animation-formula
+   * Nothing groundbreaking.
+   * @param time is the initial time
+   * @param startValue is the initial value
+   * @param change is the total change in the value
+   * @param duration is the time duration of the change
+   * @return the amount of delta in value per second needed for smooth transition
+   */
+  float generateEase(float time, float duration, float startValue, float change) {
+    time /= duration / 2;
+    if (time < 1)  {
+      return change / 2 * time * time + startValue;
+    }
+
+    time--;
+    return -change / 2 * (time * (time - 2) - 1) + startValue;
   }
 }
