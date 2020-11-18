@@ -26,12 +26,14 @@ some classes for the following parameters:
 The model contains functions facilitating the addition of a `Scene`, `Actor` or `Animation`.
 It also can generate tweened animations for any attribute using functions starting with `generateEase`.
 
+
 #Actor Class  
 This class represents and object to be animated. It keeps track of `shape`, `currentAttributes` and `rawAnimation`.
 Generally, the actor does not keep track of time, this is done by the Animation class which feeds
 a time to the actor which is rendered by updating the `currentAttributes` and rendering based on that. 
 
 * `currentAttributes` is a HashMap containing the keys `size`, `color`, `motion`. It is associated with a specific tick. 
+
 
 #Scene Class
 This class represents a canvas upon which every `Actor` will be rendered.  
