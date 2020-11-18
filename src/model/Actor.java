@@ -2,49 +2,43 @@ package model;
 import java.util.HashMap;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Point;
 
 
 public class Actor {
   Shape shape;
-  Point location;
-  HashMap<Integer, Point> timeAndLocation;
+  HashMap<String, Object> currentAttributes;
+  RawAnimation rawAnimation;
 
-  Actor(Shape shape, Point location, HashMap<Integer, Point> timeAndLocation) {
+  Actor(Shape shape, RawAnimation rawAnimation) {
     this.shape = shape;
-    this.location = location;
-    this.timeAndLocation = timeAndLocation;
+    this.rawAnimation = rawAnimation;
+    this.currentAttributes = rawAnimation.getAttributesAtTick(0);
   }
 
-  //moves actor to a speciied time
+  //moves actor to a specified time
   void move(int time) {
-    if (this.timeAndLocation.containsKey(time)) {
-      this.location = new Point(this.timeAndLocation.get(time));
+
+    if (this.rawAnimation.containsKey(time)) {
+      this.currentAttributes = rawAnimation.getAttributesAtTick(time);
     }
   }
 
   /**
-   * @param newTimeAndLocation represents the new animation and its times to be added
+   * @param rawAnimation represents the new animation to be added
    * @throws Exception thrown if there is already an animation at that time
    */
-  void addAnimation(HashMap<Integer, Point> newTimeAndLocation) throws Exception {
-    for (Integer key : newTimeAndLocation.keySet()) {
-      if (this.timeAndLocation.containsKey(key)) {
-        throw new Exception(
-            "Error adding animation: there is already an animation at tick #" + key);
-      }
-      else {
-        this.timeAndLocation.put(key, newTimeAndLocation.get(key));
-      }
-    }
+  void addAnimation(RawAnimation rawAnimation) throws Exception {
+    this.rawAnimation.mergeRawAnimation(rawAnimation);
   }
 
-  //converts object to text output at a certain time
+  //TODO: REMOVE
+  // converts object to text output at a certain time
   String convertToTextAtTime(int time) {
-    return this.shape.toString() + ", " + Integer.toString(time) + ", " + this.timeAndLocation.get(time);
+    return this.shape.toString() + ", " + Integer.toString(time) + ", ";
   }
 
-  void render() {
-    //doesn't do anything yet
+  public RawAnimation getRawAnimation() {
+    return this.rawAnimation;
   }
+
 }

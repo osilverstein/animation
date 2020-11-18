@@ -8,11 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import util.Pair;
 
 /**
  *
  */
-public class Animation implements AnimationModel<Actor, Color, Shape, Point, Float> {
+public class Animation implements AnimationModel<Actor, RawAnimation, Color, Shape, Point, Float> {
 
   Scene scene;
   ArrayList<Actor> listOfActors;
@@ -32,11 +33,11 @@ public class Animation implements AnimationModel<Actor, Color, Shape, Point, Flo
    */
   @Override
   public void play(int time1, int time2) {
-    for (int i = currentTime; i < endTime; i++) {
+    for (int i = currentTime; i <= endTime; i++) {
       for (int j = 0; j < this.listOfActors.size(); j++) {
         Actor current = this.listOfActors.get(j);
         current.move(i);
-        current.render();
+        //current.render();
       }
     }
 
@@ -55,11 +56,11 @@ public class Animation implements AnimationModel<Actor, Color, Shape, Point, Flo
   /**
    * @param shape is the shape of the actor
    * @param location is the current location of the actor
-   * @param timeAndLocation is the hashmap representing its movement
+   * @param rawAnimation is the class representing its animation
    */
   @Override
-  public void addActor(Shape shape, Point location, HashMap<Integer, Point> timeAndLocation) {
-    this.listOfActors.add(new Actor(shape, location,timeAndLocation));
+  public void addActor(Shape shape, Point location, RawAnimation rawAnimation) {
+    this.listOfActors.add(new Actor(shape,rawAnimation));
   }
 
   /**
@@ -70,8 +71,8 @@ public class Animation implements AnimationModel<Actor, Color, Shape, Point, Flo
    * @return a hashmap represent the final animation ready for input
    */
   @Override
-  public HashMap<Integer, Point> generateEaseMoveAnimation(int time1, int duration, Point loc1,
-      Point loc2) {
+  public RawAnimation generateEaseMoveAnimation(int time1, int duration, Point loc1,
+      Point loc2) throws Exception {
     float xTotalDelta = loc2.x - loc1.x; //total x distance covered
     float yTotalDelta = loc2.y - loc1.y; // total y distance covered
 
@@ -89,14 +90,46 @@ public class Animation implements AnimationModel<Actor, Color, Shape, Point, Flo
       outputAnimation.put(i, cachedLocation); //put in the new location at the current time
     }
 
-    return outputAnimation;
+    return new RawAnimation("move", outputAnimation);
+  }
+
+  /**
+   * @param time           the time at which to put the animation
+   * @param duration
+   * @param initial_width
+   * @param initial_height
+   * @param final_width
+   * @param final_height
+   * @return
+   */
+  @Override
+  public RawAnimation generateEaseResizeAnimation(int time, int duration,
+      int initial_width, int initial_height, int final_width, int final_height) throws Exception {
+    float xTotalDelta = final_width - initial_width; //total x distance
+    float yTotalDelta = final_height - initial_height; // total y distance covered
+
+    //change per tick of both x and y
+    float xDeltaPerUnitOfTime = this.generateEase(time, duration, initial_width, xTotalDelta);
+    float yDeltaPerUnitOfTime = this.generateEase(time, duration, initial_height, yTotalDelta);
+
+    HashMap<Integer, Point> outputAnimation = new HashMap<Integer, Point>();
+
+    Point cachedLocation = new Point(initial_width, initial_height);
+
+    for (int i = time; i <= time + duration; i++) {
+      cachedLocation.x = (int) (cachedLocation.x + xDeltaPerUnitOfTime); //update the x cache
+      cachedLocation.y = (int) (cachedLocation.y + yDeltaPerUnitOfTime); //update the y cache
+      outputAnimation.put(i, cachedLocation); //put in the new location at the current time
+    }
+
+    return new RawAnimation("size", outputAnimation);
   }
 
   @Override
-  public void safeAddAnimationToActor(int actorIndex, HashMap<Integer, Point> newTimeAndLocation)
+  public void safeAddAnimationToActor(int actorIndex, RawAnimation rawAnimation)
       throws Exception {
     Actor current = this.listOfActors.get(actorIndex);
-    current.addAnimation(newTimeAndLocation);
+    current.addAnimation(rawAnimation);
   }
 
 
@@ -156,5 +189,9 @@ public class Animation implements AnimationModel<Actor, Color, Shape, Point, Flo
 
     time--;
     return -change / 2 * (time * (time - 2) - 1) + startValue;
+  }
+
+  public int getEndTime() {
+    return this.endTime;
   }
 }
