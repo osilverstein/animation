@@ -9,7 +9,7 @@ An animation tool made kind of from scratch. MVC madness!
 From the perspective of everything except the view, time is kept using ticks and attributes are
 stored in hashmaps containing relavent ticks and the value of the attribute at each tick. 
 4. `RawAnimation` currently supports three mutable attributes including motion, size and color. 
-More can be easily added as needed. 
+More can be easily added as needed.  
 
 # Animation Model
 Provides an abstract model that can be implemented using any custom class. The model must be given
@@ -24,7 +24,7 @@ some classes for the following parameters:
 * `LOCATION_CLASS` represents an objects location as x, y
 
 The model contains functions facilitating the addition of a `Scene`, `Actor` or `Animation`.
-It also can generate tweened animations for any attribute using functions starting with `generateEase`.
+It also can generate tweened animations for any attribute using functions starting with `generateEase`.  
 
 
 #Actor Class  
@@ -32,7 +32,7 @@ This class represents and object to be animated. It keeps track of `shape`, `cur
 Generally, the actor does not keep track of time, this is done by the Animation class which feeds
 a time to the actor which is rendered by updating the `currentAttributes` and rendering based on that. 
 
-* `currentAttributes` is a HashMap containing the keys `size`, `color`, `motion`. It is associated with a specific tick. 
+* `currentAttributes` is a HashMap containing the keys `size`, `color`, `motion`. It is associated with a specific tick.   
 
 
 #Scene Class
