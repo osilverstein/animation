@@ -17,7 +17,6 @@ public class Actor {
 
   //moves actor to a specified time
   void move(int time) {
-
     if (this.rawAnimation.containsKey(time)) {
       this.currentAttributes = rawAnimation.getAttributesAtTick(time);
     }
