@@ -40,3 +40,11 @@ This class represents a canvas upon which every `Actor` will be rendered.
 * `y` represents the y-dimention of the `Scene`.  
 * `background` represents the background color of the `Scene` as a `Color`. 
 
+# The Textual View
+Content goes here.
+
+# The SVG View
+Content goes here.
+
+# The Visual Animation View
+Content goes here. 
