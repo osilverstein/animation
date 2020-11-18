@@ -48,3 +48,9 @@ Content goes here.
 
 # The Visual Animation View
 Content goes here. 
+
+# How attributes are handled
+Attributes are all in the form `HashMap<Integer, PARAMETER>` where `PARAMETER` may be any kind of object.
+In my specific implementation, parameter can either be a `Pair` or a `Color`.  
+
+The `pair` is a stand-in for a tuple which is used to either represent an x,y coordinate or a width, height.
